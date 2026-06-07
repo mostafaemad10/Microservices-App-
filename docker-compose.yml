@@ -1,0 +1,34 @@
+services:
+  users:
+    build: ./users-service
+    ports:
+      - "5001:5001"
+
+  products:
+    build: ./products-service
+    ports:
+      - "5002:5002"
+
+  orders:
+    build: ./orders-service
+    ports:
+      - "5003:5003"
+    environment:
+      - USERS_URL=http://users:5001
+      - PRODUCTS_URL=http://products:5002
+    depends_on:
+      - users
+      - products
+
+  gateway:
+    build: ./gateway-service
+    ports:
+      - "5000:5000"
+    environment:
+      - USERS_URL=http://users:5001
+      - PRODUCTS_URL=http://products:5002
+      - ORDERS_URL=http://orders:5003
+    depends_on:
+      - users
+      - products
+      - orders
